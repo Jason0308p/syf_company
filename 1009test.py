@@ -1,3 +1,4 @@
+from fontTools.misc.plistlib import end_integer
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -95,24 +96,27 @@ sheet_url = "https://docs.google.com/spreadsheets/d/18H9Qh64jqWMRNnv_-tLj85mkUCY
 gc = pygsheets.authorize(service_file=url)
 sheet_name = gc.open_by_url(sheet_url)
 sheets = sheet_name.worksheets()
-query_data = sheets[0].get_values("A2", "A50")
+
+#關鍵字數目
+start_cell = 3
+end_cell =  4
+start = "A" + str(start_cell)
+end  = "A" + str(end_cell)
+
+query_data = sheets[0].get_values(start, end)
 queries = [row[0] for row in query_data]
-
-
 
 if __name__ == "__main__":
     final_results = batch_search(queries)
     df = pd.DataFrame(final_results, columns=['广告数量', 'SYF网址', '页数', 'Google 搜索页面 URL'])
 
     # 重要!!! 把dataframe資料為 nan 轉換成 None，因為google sheet 只讀得懂None
-    #df = df.where(pd.notnull(df),None)
+    # df = df.where(pd.notnull(df),None)
     # print("DataFrame before converting to list:")
     # print(df)
 
-
     data_with_headers = [df.columns.tolist()] + df.values.tolist()
     data_to_insert = df.values.tolist()
-
 
     pd.set_option('display.max_rows',None)
     pd.set_option('display.max_columns',None)
@@ -121,12 +125,12 @@ if __name__ == "__main__":
     # update_row 第一個參數為index，為輸入的row number
     # col_offset 為跳過幾個col後再輸入資料
     for number in range(len(data_to_insert)):
-        num = number+2
+
 
         # 重要!!!
         # 再次確保倒入 google sheet 時沒有nan
         data_to_insert[number] = [None if pd.isna(x) else x for x in data_to_insert[number]]
-        sheets[0].update_row(num, values=data_to_insert[number],col_offset=1)
+        sheets[0].update_row(start_cell+number, values=data_to_insert[number],col_offset=1)
 
     print("\n----- 最終結果 -----")
     print(df)

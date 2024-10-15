@@ -1,4 +1,3 @@
-from fontTools.misc.plistlib import end_integer
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -9,6 +8,8 @@ import pandas as pd
 
 def search_and_scroll(search_query):
     driver = webdriver.Chrome()
+    # 初始化 chrome 瀏覽器，自動下載與電腦 chrome 兼容的最新版本 chrome driver
+    # webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
     try:
         driver.get("https://www.google.com")
@@ -22,8 +23,8 @@ def search_and_scroll(search_query):
         sponsor_ad_count = 0
         syf_data = []
 
-        #while next_page_count < 2:
-        while next_page_count < 10:
+        while next_page_count < 2:
+        #while next_page_count < 10:
             time.sleep(1)
 
             current_page_url = driver.current_url
@@ -98,8 +99,8 @@ sheet_name = gc.open_by_url(sheet_url)
 sheets = sheet_name.worksheets()
 
 #關鍵字數目
-start_cell = 2
-end_cell =  20
+start_cell = 3
+end_cell =  5
 start = "A" + str(start_cell)
 end  = "A" + str(end_cell)
 

@@ -9,8 +9,9 @@ gc = pygsheets.authorize(service_file=url)
 sheet_location = gc.open_by_url(sheet_url)
 sheets = sheet_location.worksheets()
 
+page_num = 6
 # 获取数据
-df = sheets[1].get_as_df(has_header=True)
+df = sheets[page_num].get_as_df(has_header=True)
 
 #pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)

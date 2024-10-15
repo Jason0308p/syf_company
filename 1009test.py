@@ -22,8 +22,8 @@ def search_and_scroll(search_query):
         sponsor_ad_count = 0
         syf_data = []
 
-        while next_page_count < 2:
-        #while next_page_count < 10:
+        #while next_page_count < 2:
+        while next_page_count < 10:
             time.sleep(1)
 
             current_page_url = driver.current_url
@@ -98,8 +98,8 @@ sheet_name = gc.open_by_url(sheet_url)
 sheets = sheet_name.worksheets()
 
 #關鍵字數目
-start_cell = 3
-end_cell =  4
+start_cell = 2
+end_cell =  20
 start = "A" + str(start_cell)
 end  = "A" + str(end_cell)
 

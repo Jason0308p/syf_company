@@ -1,10 +1,6 @@
-/**
-* 尊敬的用户，你好：页面 JS 面板是高阶用法，一般不建议普通用户使用，如需使用，请确定你具备研发背景，能够自我排查问题。当然，你也可以咨询身边的技术顾问或者联系宜搭平台的技术支持获得服务（可能收费）。
-* 我们可以用 JS 面板来开发一些定制度高功能，比如：调用阿里云接口用来做图像识别、上报用户使用数据（如加载完成打点）等等。
-* 你可以点击面板上方的 「使用帮助」了解。
-*/
 
 // 当页面渲染完毕后马上调用下面的函数，这个函数是在当前页面 - 设置 - 生命周期 - 页面加载完成时中被关联的。
+
 export function didMount() {
   console.log(`「页面 JS」：当前页面地址 ${location.href}`);
   //console.log(`「页面 JS」：当前页面 id 参数为 ${this.state.urlParams.id}`);
@@ -17,9 +13,9 @@ export function didMount() {
   if (x_hash.length != 0) {
     this.$('textField_lywahqdo').setValue(location.hash.substr(5))
   }  
-
     
 }
+
 var getJSON = async (url) => {
   let response = await fetch(url);
   //console.log(response)

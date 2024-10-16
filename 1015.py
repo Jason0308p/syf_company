@@ -114,12 +114,12 @@ sheet_name = gc.open_by_url(sheet_url)
 sheets = sheet_name.worksheets()
 
 #關鍵字數目
-start_cell = 3
+start_cell = 2
 end_cell =  5
 start = "A" + str(start_cell)
 end  = "A" + str(end_cell)
 
-query_data = sheets[0].get_values(start, end)
+query_data = sheets[1].get_values(start, end)
 queries = [row[0] for row in query_data]
 
 if __name__ == "__main__":
@@ -141,13 +141,10 @@ if __name__ == "__main__":
     # update_row 第一個參數為index，為輸入的row number
     # col_offset 為跳過幾個col後再輸入資料
     for number in range(len(data_to_insert)):
-
-
         # 重要!!!
         # 再次確保倒入 google sheet 時沒有nan
         data_to_insert[number] = [None if pd.isna(x) else x for x in data_to_insert[number]]
-        sheets[0].update_row(start_cell+number, values=data_to_insert[number],col_offset=1)
+        sheets[1].update_row(start_cell+number, values=data_to_insert[number],col_offset=1)
 
     print("\n----- 最終結果 -----")
     print(df)
-

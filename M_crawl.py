@@ -1,3 +1,4 @@
+from openpyxl.styles.builtins import total
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -7,7 +8,7 @@ import pandas as pd
 
 # 設定每次搜尋2頁
 search_page = 2
-total_pages = 10  # 總共要搜尋的頁數
+total_pages = 3  # 總共要搜尋的頁數
 num = 1  # 選擇要使用的 sheet 工作表
 
 # 搜尋並滾動
@@ -18,7 +19,8 @@ def search_and_scroll(search_query, start_page):
         search_box = driver.find_element(By.NAME, "q")
         search_box.send_keys(search_query)
         search_box.send_keys(Keys.RETURN)
-        time.sleep(15)
+        time.sleep(0.6)
+
 
         # 點擊跳轉到指定的起始頁
         if start_page > 1:
@@ -31,7 +33,7 @@ def search_and_scroll(search_query, start_page):
         max_pages = start_page + search_page - 1
 
         while current_page <= max_pages:
-            time.sleep(1)
+            time.sleep(0.6)
 
             current_page_url = driver.current_url
             ad_label = driver.find_elements(By.XPATH, ".//span[contains(text(),'贊助商廣告')]")
@@ -104,6 +106,7 @@ sheets = sheet_name.worksheets()
 # 關鍵字數目
 start_cell = 2
 end_cell = 3
+total_query = end_cell - start_cell + 1
 query_data = sheets[1].get_values(f"A{start_cell}", f"A{end_cell}")
 queries = [row[0] for row in query_data]
 
@@ -112,8 +115,6 @@ if __name__ == "__main__":
     df = pd.DataFrame(final_results, columns=['SYF網址', '廣告數量', '頁數', 'Google搜尋頁面URL'])
 
     data_to_insert = df.values.tolist()
-    pd.set_option('display.max_rows', None)
-    pd.set_option('display.max_columns', None)
 
     for number in range(len(data_to_insert)):
         data_to_insert[number] = [None if pd.isna(x) else x for x in data_to_insert[number]]
@@ -121,3 +122,4 @@ if __name__ == "__main__":
 
     print("\n----- 最終結果 -----")
     print(df)
+    print(f'查詢 {start_cell} 到{end_cell}，共 {total_query} 個關鍵字')

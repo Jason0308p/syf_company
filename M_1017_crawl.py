@@ -6,7 +6,7 @@ import pygsheets
 import pandas as pd
 
 # 設定搜尋的頁數切片和起點
-search_page = 4
+search_page = 2
 num = 1
 
 target_jscontroller = "SC7lYd"
@@ -27,7 +27,7 @@ def search_and_scroll(search_query):
         found_any = False
 
         while current_page <= search_page:
-            time.sleep(1)
+            time.sleep(1)  # 加大等待時間
 
             # 記錄當前搜尋頁的 url
             current_page_url = driver.current_url
@@ -39,32 +39,35 @@ def search_and_scroll(search_query):
             # 獲取當前頁面所有符合 jscontroller 的 div 元素
             elements = driver.find_elements(By.XPATH, f"//div[@jscontroller='{target_jscontroller}']")
 
-            # 遍歷每個元素
             for index, element in enumerate(elements, start=1):
-                total_position += 1  # 更新總排名計數
-                # 檢查元素內容是否包含目標網址片段
-                if target_url_part in element.text:
-                    syf_url = element.find_element(By.XPATH, ".//cite").text  # 抓取符合的網址
-                    href_link = element.find_element(By.XPATH, ".//a[@jsname='UWckNb']").get_attribute("href")  # 獲取 href 連結
-                    print(f"目標網址出現在第 {total_position} 個搜尋結果 (第 {current_page} 頁, 第 {index} 個)")
+                total_position += 1
+                try:
+                    if target_url_part in element.text:
+                        syf_url = element.find_element(By.XPATH, ".//cite").text
+                        href_link = element.find_element(By.XPATH, ".//a[@jsname='UWckNb']").get_attribute("href")
+                        print(f"目標網址出現在第 {total_position} 個搜尋結果 (第 {current_page} 頁, 第 {index} 個)")
 
-                    syf_data.append({
-                        'Google 搜尋網址': current_page_url,
-                        'SYF網址': syf_url,
-                        'href到達連結': href_link,
-                        '廣告數量': sponsor_ad_count,
-                        '到達頁數': current_page,
-                        '排名': total_position
-                    })
-                    found_any = True  # 記錄找到結果
+                        syf_data.append({
+                            'Google 搜尋網址': current_page_url,
+                            'SYF網址': syf_url,
+                            'href到達連結': href_link,
+                            '廣告數量': sponsor_ad_count,
+                            '到達頁數': current_page,
+                            '排名': total_position
+                        })
+                        found_any = True
 
-            # 下一頁
+                except Exception as e:
+                    print(f"Error: {e}")
+                    continue
+
             current_page += 1
             try:
                 next_button = driver.find_element(By.ID, "pnnext")
                 next_button.click()
             except Exception as e:
-                break  # 如果無法點擊下一頁，則退出循環
+                print(f"Error clicking next page: {e}")
+                break
 
         return syf_data
 
@@ -96,7 +99,7 @@ end_cell = 4
 start = "A" + str(start_cell)
 end = "A" + str(end_cell)
 
-query_data = sheets[1].get_values(start, end)
+query_data = sheets[2].get_values(start, end)
 queries = [row[0] for row in query_data]
 
 if __name__ == "__main__":
@@ -111,7 +114,7 @@ if __name__ == "__main__":
 
     for number in range(len(data_to_insert)):
         data_to_insert[number] = [None if pd.isna(x) else x for x in data_to_insert[number]]
-        sheets[1].update_row(start_cell + number, values=data_to_insert[number], col_offset=1)
+        sheets[2].update_row(start_cell + number, values=data_to_insert[number], col_offset=1)
 
     print("\n----- 最終結果 -----")
     print(df)
